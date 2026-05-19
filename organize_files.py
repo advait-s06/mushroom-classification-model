@@ -38,7 +38,7 @@ with zipfile.ZipFile(dataset_zip, 'r') as archive:
     # Extract 2,000 images from each folder
     for category, images in categorized_images.items():
         # Pick 2,000 random files
-        file_amount = min(len(images), 2000)
+        file_amount = min(len(images), 1000)
         selected_files = random.sample(images, file_amount)
 
         # Create new organized folder
