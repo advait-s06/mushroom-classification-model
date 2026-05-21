@@ -15,4 +15,4 @@ def check_folder_counts(target_directory):
             
             print(f"{item.name}: {len(files_inside)} files")
 
-check_folder_counts("organized_mushroom_data")
+check_folder_counts("split_mushroom_data")

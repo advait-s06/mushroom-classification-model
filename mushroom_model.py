@@ -30,12 +30,12 @@ val_test_transforms = v2.Compose([
 splitfolders.ratio('organized_mushroom_data', output='split_mushroom_data', seed=1337, ratio=(.8, .1, .1))
 
 train_dataset = datasets.ImageFolder('split_mushroom_data/train', transform=train_transforms)
-val_dataset = datasets.ImageFolder('split_mushroom_data/val', transforms=val_test_transforms)
-test_dataset = datasets.ImageFolder('split_mushroom_data/test', transforms=val_test_transforms)
+val_dataset = datasets.ImageFolder('split_mushroom_data/val', transform=val_test_transforms)
+test_dataset = datasets.ImageFolder('split_mushroom_data/test', transform=val_test_transforms)
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 NUM_EPOCHS = 10
 # Will make loop traversing through the loaders and printing intput and output values later
