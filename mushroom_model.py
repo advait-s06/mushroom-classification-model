@@ -8,6 +8,8 @@ from PIL import Image
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import v2
 import splitfolders
+import matplotlib.pyplot as plt
+import numpy as np
 
 torch.manual_seed(127)
 
@@ -31,14 +33,28 @@ train_dataset = ImageFolder('split_mushroom_data/train', transform=train_transfo
 val_dataset = ImageFolder('split_mushroom_data/val', transform=val_test_transforms)
 test_dataset = ImageFolder('split_mushroom_data/test', transform=val_test_transforms)
 
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
-print(train_loader)
+# Visualization
+for idx, (images, labels) in enumerate(train_loader):
+    break
+
+plt.figure(figsize=(20,20))
+
+for idx, image in enumerate(images):
+    if idx < 100:
+        plt1 = plt.subplot(10, 10, idx + 1)
+        image = image.permute(1, 2, 0)
+        plt1.imshow(image)
+        plt1.set_title(train_dataset.classes[labels[idx].item()])
+        plt1.axis('off')
+plt.tight_layout()
+plt.show()
 
 NUM_EPOCHS = 1
-# Iterating through training data
+# Iterating through training, val, and test data
 for i in range(NUM_EPOCHS):
     for train_X, train_y in train_loader:
         print((train_X, train_y))
