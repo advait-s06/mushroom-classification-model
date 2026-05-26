@@ -64,3 +64,29 @@ for i in range(NUM_EPOCHS):
 with torch.no_grad():
     for test_X, test_y in test_loader:
         print((test_X, test_y))
+
+class MyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1000, 2000, 3, 1, 1)
+        self.conv2 = nn.Conv2d(2000, 3000, 5, 1, 2)
+        self.conv3 = nn.Conv2d(3000, 3500, 5, 1, 2)
+        self.linear1 = nn.Linear(3500*12*12, 30000)
+        self.linear2 = nn.Linear(30000, 4)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.relu = nn.ReLU()
+
+    def forward(self, input):
+        x = self.relu(self.conv1(input))
+        x = self.pool(x)
+        x = self.relu(self.conv2(x))
+        x = self.pool(x)
+        x = self.relu(self.conv3(x))
+        x = self.pool(x)
+        x = x.flatten(start_dim=1)
+        x = self.relu(self.linear1(x))
+        output = self.linear2(x)
+        return output
+
+model = MyModel()
+model.train()
