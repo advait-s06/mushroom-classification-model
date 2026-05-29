@@ -38,40 +38,29 @@ val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
 # Visualization
-for idx, (images, labels) in enumerate(train_loader):
-    break
+# for idx, (images, labels) in enumerate(train_loader):
+    # break
 
-plt.figure(figsize=(20,20))
+# plt.figure(figsize=(20,20))
 
-for idx, image in enumerate(images):
-    if idx < 100:
-        plt1 = plt.subplot(10, 10, idx + 1)
-        image = image.permute(1, 2, 0)
-        plt1.imshow(image)
-        plt1.set_title(train_dataset.classes[labels[idx].item()])
-        plt1.axis('off')
-plt.tight_layout()
-plt.show()
-
-NUM_EPOCHS = 1
-# Iterating through training, val, and test data
-for i in range(NUM_EPOCHS):
-    for train_X, train_y in train_loader:
-        print((train_X, train_y))
-    for val_X, val_y in val_loader:
-        print((val_X, val_y))
-
-with torch.no_grad():
-    for test_X, test_y in test_loader:
-        print((test_X, test_y))
+# for idx, image in enumerate(images):
+    # if idx < 100:
+       # plt1 = plt.subplot(10, 10, idx + 1)
+       # image = image.permute(1, 2, 0)
+       # plt1.imshow(image)
+        #plt1.set_title(train_dataset.classes[labels[idx].item()])
+        #plt1.axis('off')
+#plt.tight_layout()
+#plt.show()
 
 class MyModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(1000, 2000, 3, 1, 1)
-        self.conv2 = nn.Conv2d(2000, 3000, 5, 1, 2)
-        self.conv3 = nn.Conv2d(3000, 3500, 5, 1, 2)
-        self.linear1 = nn.Linear(3500*12*12, 30000)
+        self.conv1 = nn.Conv2d(3, 1000, 3, 1, 1)
+        self.conv2 = nn.Conv2d(1000, 2000, 3, 1, 1)
+        self.conv3 = nn.Conv2d(2000, 3000, 5, 1, 2)
+        self.conv4 = nn.Conv2d(3000, 3500, 5, 1, 2)
+        self.linear1 = nn.Linear(3500*6*6, 30000)
         self.linear2 = nn.Linear(30000, 4)
         self.pool = nn.MaxPool2d(2, 2)
         self.relu = nn.ReLU()
@@ -83,6 +72,8 @@ class MyModel(nn.Module):
         x = self.pool(x)
         x = self.relu(self.conv3(x))
         x = self.pool(x)
+        x = self.relu(self.conv4(x))
+        x = self.pool(x)
         x = x.flatten(start_dim=1)
         x = self.relu(self.linear1(x))
         output = self.linear2(x)
@@ -90,3 +81,45 @@ class MyModel(nn.Module):
 
 model = MyModel()
 model.train()
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+NUM_EPOCHS = 1
+# Iterating through training, val, and test data
+for i in range(NUM_EPOCHS):
+    total_correct = 0
+    for idx, (train_X, train_y) in enumerate(train_loader):
+        train_preds = model(train_X)
+        loss = criterion(train_preds, train_y)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        class_train_preds = torch.max(train_preds, axis=1)[1]
+        total_correct += (class_train_preds == train_y).sum()
+        print("finished batch")
+        if idx == 4:
+            print("5 train batches done\n")
+            break
+    print(f"Training Accuracy: {total_correct / len(train_loader)}")
+    total_correct = 0
+    for idx, (val_X, val_y) in enumerate(val_loader):
+        val_preds = model(val_X)
+        loss = criterion(val_preds, val_y)
+        class_val_preds = torch.max(val_preds, axis=1)[1]
+        total_correct += (class_val_preds == val_y).sum()
+        if idx == 4:
+            print("5 val batches done\n")
+            break
+    print(f"Validation Accuracy: {total_correct / len(val_loader)}")
+
+with torch.no_grad():
+    total_correct = 0
+    for idx, (test_X, test_y) in enumerate(test_loader):
+        test_preds = model(test_X)
+        loss = criterion(test_preds, test_y)
+        class_test_preds = torch.max(test_preds, axis=1)[1]
+        total_correct += (class_test_preds == test_y).sum()
+        if idx == 4:
+            print("5 test batches done\n")
+            break
+    print(f"Test Accuracy: {total_correct / len(test_loader)}")
