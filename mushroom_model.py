@@ -17,7 +17,7 @@ train_transforms = v2.Compose([
     v2.ToTensor(), # Applied to all images
     v2.Resize(size=(100, 100)), # Applies to all images
     v2.RandomHorizontalFlip(0.15), # Randomly applied to images with 0.15 probability
-    v2.RandomPerspective(0.3, 0.15), # Randomly applied distortion to images with 0.15 probability
+    # v2.RandomPerspective(0.3, 0.15), # Randomly applied distortion to images with 0.15 probability
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), # Normalizes all inputs
 ])
 
@@ -56,12 +56,12 @@ test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 class MyModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 1000, 3, 1, 1)
-        self.conv2 = nn.Conv2d(1000, 2000, 3, 1, 1)
-        self.conv3 = nn.Conv2d(2000, 3000, 5, 1, 2)
-        self.conv4 = nn.Conv2d(3000, 3500, 5, 1, 2)
-        self.linear1 = nn.Linear(3500*6*6, 30000)
-        self.linear2 = nn.Linear(30000, 4)
+        self.conv1 = nn.Conv2d(3, 10, 3, 1, 1)
+        self.conv2 = nn.Conv2d(10, 20, 3, 1, 1)
+        self.conv3 = nn.Conv2d(20, 30, 5, 1, 2)
+        self.conv4 = nn.Conv2d(30, 35, 5, 1, 2)
+        self.linear1 = nn.Linear(35*6*6, 300)
+        self.linear2 = nn.Linear(300, 4)
         self.pool = nn.MaxPool2d(2, 2)
         self.relu = nn.ReLU()
 
@@ -83,8 +83,12 @@ model = MyModel()
 model.train()
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
-NUM_EPOCHS = 1
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+NUM_EPOCHS = 20
+
+for images, labels in train_loader:
+    break
+
 # Iterating through training, val, and test data
 for i in range(NUM_EPOCHS):
     total_correct = 0
@@ -95,31 +99,24 @@ for i in range(NUM_EPOCHS):
         loss.backward()
         optimizer.step()
         class_train_preds = torch.max(train_preds, axis=1)[1]
-        total_correct += (class_train_preds == train_y).sum()
-        print("finished batch")
-        if idx == 4:
-            print("5 train batches done\n")
-            break
-    print(f"Training Accuracy: {total_correct / len(train_loader)}")
+        total_correct += (class_train_preds == train_y).sum().item()
+    print(f"Training Accuracy: {total_correct / len(train_dataset)}")
+    #print loss
     total_correct = 0
     for idx, (val_X, val_y) in enumerate(val_loader):
         val_preds = model(val_X)
         loss = criterion(val_preds, val_y)
         class_val_preds = torch.max(val_preds, axis=1)[1]
-        total_correct += (class_val_preds == val_y).sum()
-        if idx == 4:
-            print("5 val batches done\n")
-            break
-    print(f"Validation Accuracy: {total_correct / len(val_loader)}")
+        total_correct += (class_val_preds == val_y).sum().item()
+    print(f"Validation Accuracy: {total_correct / len(val_dataset)}")
 
+model.eval()
 with torch.no_grad():
     total_correct = 0
     for idx, (test_X, test_y) in enumerate(test_loader):
         test_preds = model(test_X)
         loss = criterion(test_preds, test_y)
         class_test_preds = torch.max(test_preds, axis=1)[1]
-        total_correct += (class_test_preds == test_y).sum()
-        if idx == 4:
-            print("5 test batches done\n")
-            break
-    print(f"Test Accuracy: {total_correct / len(test_loader)}")
+        total_correct += (class_test_preds == test_y).sum().item()
+
+    print(f"Test Accuracy: {total_correct / len(test_dataset)}")
