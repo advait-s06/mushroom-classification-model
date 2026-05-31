@@ -18,7 +18,6 @@ train_transforms = v2.Compose([
     v2.ToTensor(), # Applied to all images
     v2.Resize(size=(100, 100)), # Applies to all images
     v2.RandomHorizontalFlip(0.15), # Randomly applied to images with 0.15 probability
-    v2.RandomPerspective(0.3, 0.15), # Randomly applied distortion to images with 0.15 probability
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), # Normalizes all inputs
 ])
 
