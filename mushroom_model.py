@@ -18,7 +18,7 @@ train_transforms = v2.Compose([
     v2.ToTensor(), # Applied to all images
     v2.Resize(size=(100, 100)), # Applies to all images
     v2.RandomHorizontalFlip(0.15), # Randomly applied to images with 0.15 probability
-    v2.RandomPerspective(0.3, 0.15), # Randomly applied distortion to images with 0.15 probability
+    # v2.RandomPerspective(0.3, 0.15), # Randomly applied distortion to images with 0.15 probability
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), # Normalizes all inputs
 ])
 
@@ -39,20 +39,22 @@ val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
 # Visualization
-for idx, (images, labels) in enumerate(train_loader):
-    break
+visualize = input("Do you want to visualize the images (y/n)? ")
+if visualize == "y":
+    for idx, (images, labels) in enumerate(train_loader):
+        break
 
-plt.figure(figsize=(20,20))
+    plt.figure(figsize=(20,20))
 
-for idx, image in enumerate(images):
-    if idx < 100:
-        plt1 = plt.subplot(10, 10, idx + 1)
-        image = image.permute(1, 2, 0)
-        plt1.imshow(image)
-        plt1.set_title(train_dataset.classes[labels[idx].item()])
-        plt1.axis('off')
-plt.tight_layout()
-plt.show()
+    for idx, image in enumerate(images):
+        if idx < 100:
+            plt1 = plt.subplot(10, 10, idx + 1)
+            image = image.permute(1, 2, 0)
+            plt1.imshow(image)
+            plt1.set_title(train_dataset.classes[labels[idx].item()])
+            plt1.axis('off')
+    plt.tight_layout()
+    plt.show()
 
 class MyModel(nn.Module):
     def __init__(self):
@@ -64,7 +66,6 @@ class MyModel(nn.Module):
         self.linear1 = nn.Linear(35*6*6, 300)
         self.linear2 = nn.Linear(300, 4)
         self.pool = nn.MaxPool2d(2, 2)
-        self.relu = nn.ReLU()
 
     def forward(self, input):
         x = self.relu(self.conv1(input))
