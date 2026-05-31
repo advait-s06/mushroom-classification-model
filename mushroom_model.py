@@ -147,13 +147,6 @@ with torch.no_grad():
 
     print(f"Test Accuracy: {total_correct / len(test_dataset)} and Loss: {loss}")
 
-# test loss graph
-plt.title('Test Loss vs. Epochs')
-plt.plot(range(NUM_EPOCHS), test_losses)
-plt.xlabel("Epoch #")
-plt.ylabel("Test Loss")
-plt.show()
-
 # Calculate precision, recall, and create Confusion Matrix
 precision = precision_score(total_targets, total_preds, average=None)
 recall = recall_score(total_targets, total_preds, average=None)
