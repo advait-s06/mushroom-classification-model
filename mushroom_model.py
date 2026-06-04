@@ -13,6 +13,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_score, recall_score
 
 torch.manual_seed(127)
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 train_transforms = v2.Compose([
     v2.ToTensor(), # Applied to all images
@@ -83,11 +84,12 @@ class MyModel(nn.Module):
         return output
 
 model = MyModel()
+model.to(device)
 model.train()
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
-NUM_EPOCHS = 5
+NUM_EPOCHS = 20
 
 for images, labels in train_loader:
     break
@@ -98,6 +100,8 @@ val_losses = []
 for i in range(NUM_EPOCHS):
     total_correct = 0
     for idx, (train_X, train_y) in enumerate(train_loader):
+        train_X = train_X.to(device)
+        train_y = train_y.to(device)
         train_preds = model(train_X)
         loss = criterion(train_preds, train_y)
         optimizer.zero_grad()
@@ -105,15 +109,17 @@ for i in range(NUM_EPOCHS):
         optimizer.step()
         class_train_preds = torch.max(train_preds, axis=1)[1]
         total_correct += (class_train_preds == train_y).sum().item()
-    train_losses.append(loss.detach().numpy())
+    train_losses.append(loss.detach().cpu().numpy())
     print(f"Epoch: {i + 1} \nTraining Accuracy: {total_correct / len(train_dataset)} and Loss: {loss}")
     total_correct = 0
     for idx, (val_X, val_y) in enumerate(val_loader):
+        val_X = val_X.to(device)
+        val_y = val_y.to(device)
         val_preds = model(val_X)
         loss = criterion(val_preds, val_y)
         class_val_preds = torch.max(val_preds, axis=1)[1]
         total_correct += (class_val_preds == val_y).sum().item()
-    val_losses.append(loss.detach().numpy())
+    val_losses.append(loss.detach().cpu().numpy())
     print(f"Validation Accuracy: {total_correct / len(val_dataset)} and Loss: {loss}")
 
 # train/val loss graph
@@ -136,6 +142,8 @@ test_losses = []
 with torch.no_grad():
     total_correct = 0
     for idx, (test_X, test_y) in enumerate(test_loader):
+        test_X = test_X.to(device)
+        test_y = test_y.to(device)
         test_preds = model(test_X)
         loss = criterion(test_preds, test_y)
         class_test_preds = torch.max(test_preds, axis=1)[1]
@@ -143,7 +151,7 @@ with torch.no_grad():
 
         total_targets.extend(test_y.tolist())
         total_preds.extend(class_test_preds.squeeze().tolist())
-    test_losses.append(loss.detach().numpy())
+    test_losses.append(loss.detach().cpu().numpy())
 
     print(f"Test Accuracy: {total_correct / len(test_dataset)} and Loss: {loss}")
 
