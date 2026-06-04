@@ -11,6 +11,7 @@ import splitfolders
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_score, recall_score
+import torch.optim.lr_scheduler.ExponentialLR as ExpLR
 
 torch.manual_seed(127)
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -93,12 +94,18 @@ model.train()
 
 criterion = nn.CrossEntropyLoss()
 <<<<<<< HEAD
+<<<<<<< HEAD
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 NUM_EPOCHS = 20
 =======
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.01)
 NUM_EPOCHS = 5
 >>>>>>> e9d0b9d0fb2f69c290a99b1e49f26ddf09d54bfc
+=======
+optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=0.01)
+scheduler = ExpLR(optimizer, gamma=0.9)
+NUM_EPOCHS = 20
+>>>>>>> 931663c65ccb9313f6b088fdfb4883ca2a81f33a
 
 for images, labels in train_loader:
     break
@@ -145,6 +152,7 @@ if __name__ == "__main__":
             optimizer.step()
             class_train_preds = torch.max(train_preds, axis=1)[1]
             total_correct += (class_train_preds == train_y).sum().item()
+        scheduler.step()
         train_losses.append(loss.detach().numpy())
         print(f"Epoch: {i + 1} \nTraining Accuracy: {total_correct / len(train_dataset)} and Loss: {loss}")
         total_correct = 0
