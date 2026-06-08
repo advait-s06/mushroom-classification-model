@@ -186,3 +186,6 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.c
 disp.plot()
 plt.savefig('confusion-matrix.png')
 plt.show() 
+
+# Saving the model to a file path
+torch.save(model.state_dict(), "model.pt")
