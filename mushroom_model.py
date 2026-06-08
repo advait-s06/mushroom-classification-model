@@ -19,7 +19,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 train_transforms = v2.Compose([
     v2.ToTensor(), # Applied to all images
     # v2.Resize(size=(100, 100), antialias=True), # Applies to all images
-    v2.RandomResizedCrop(size=(100, 100), antialias=True),
+    v2.RandomResizedCrop(size=(200, 200), antialias=True),
     v2.RandomRotation(15),
     v2.RandomHorizontalFlip(0.5), # Randomly applied to images with 0.15 probability
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), # Normalizes all inputs
@@ -27,7 +27,7 @@ train_transforms = v2.Compose([
 
 val_test_transforms = v2.Compose([
     v2.ToTensor(),
-    v2.Resize(size=(100, 100)),
+    v2.Resize(size=(200, 200)),
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
@@ -70,8 +70,8 @@ class MyModel(nn.Module):
         self.batchNorm3 = nn.BatchNorm2d(30)
         self.conv4 = nn.Conv2d(30, 35, 5, 1, 2)
         self.batchNorm4 = nn.BatchNorm2d(35)
-        self.linear1 = nn.Linear(35*6*6, 300)
-        self.dropout = nn.Dropout(0.1)
+        self.linear1 = nn.Linear(35*12*12, 300)
+        self.dropout = nn.Dropout(0.2)
         self.linear2 = nn.Linear(300, 4)
         self.pool = nn.MaxPool2d(2, 2)
         self.relu = nn.ReLU()
