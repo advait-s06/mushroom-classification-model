@@ -184,12 +184,8 @@ print(f"Recall: Conditionally Edible - {recall[0]}, Deadly - {recall[1]}, Edible
 cm = confusion_matrix(total_targets, total_preds)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
 disp.plot()
-<<<<<<< HEAD
-plt.show()
+plt.savefig('confusion-matrix.png')
+plt.show() 
 
 # Saving the model to a file path
 torch.save(model.state_dict(), "model.pt")
-=======
-plt.savefig('confusion-matrix.png')
-plt.show() 
->>>>>>> 2a8f3593af51eb2826d5b842d2c63b9310b685d2
