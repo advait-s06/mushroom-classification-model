@@ -177,3 +177,6 @@ cm = confusion_matrix(total_targets, total_preds)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
 disp.plot()
 plt.show()
+
+# Saving the model to a file path
+torch.save(model.state_dict(), "model.pt")
