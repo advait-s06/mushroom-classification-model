@@ -103,7 +103,7 @@ class_weights = torch.tensor([1.1, 1.3, 1.0, 1.2])
 criterion = nn.CrossEntropyLoss(weight=class_weights.to(device))
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.000001)
 # scheduler = ExpLR(optimizer, gamma=0.9)
-NUM_EPOCHS = 30
+NUM_EPOCHS = 35
 
 for images, labels in train_loader:
     break
@@ -145,12 +145,14 @@ if __name__ == "__main__":
     plt.plot(range(NUM_EPOCHS), train_losses)
     plt.xlabel("Epoch #")
     plt.ylabel("Train Loss")
+    plt.savefig('Train-LossVSEpoch.png')
     plt.show()
 
     plt.title('Val Loss vs. Epochs')
     plt.plot(range(NUM_EPOCHS), val_losses)
     plt.xlabel("Epoch #")
     plt.ylabel("Val Loss")
+    plt.savefig('Val-LossVSEpoch.png')
     plt.show()
 
     model.eval()
@@ -182,4 +184,5 @@ print(f"Recall: Conditionally Edible - {recall[0]}, Deadly - {recall[1]}, Edible
 cm = confusion_matrix(total_targets, total_preds)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
 disp.plot()
+plt.savefig('confusion-matrix.png')
 plt.show() 
