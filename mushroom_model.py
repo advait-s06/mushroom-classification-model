@@ -37,7 +37,7 @@ train_dataset = ImageFolder('split_mushroom_data/train', transform=train_transfo
 val_dataset = ImageFolder('split_mushroom_data/val', transform=val_test_transforms)
 test_dataset = ImageFolder('split_mushroom_data/test', transform=val_test_transforms)
 
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=16, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=16, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False, num_workers=16, pin_memory=True)
 
@@ -59,6 +59,8 @@ if visualize == "y":
     plt.tight_layout()
     plt.savefig('image-visualize.png')
     plt.show()
+
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
 
 class MyModel(nn.Module):
     def __init__(self):
