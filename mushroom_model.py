@@ -57,6 +57,7 @@ if visualize == "y":
             plt1.set_title(train_dataset.classes[labels[idx].item()])
             plt1.axis('off')
     plt.tight_layout()
+    plt.savefig('image-visualize.png')
     plt.show()
 
 class MyModel(nn.Module):
