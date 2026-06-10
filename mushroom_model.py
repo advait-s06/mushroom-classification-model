@@ -98,21 +98,21 @@ class MyModel(nn.Module):
         output = self.linear2(x)
         return output
 
-model = MyModel()
-model = model.to(device)
-model.train()
-
-class_weights = torch.tensor([1.1, 1.3, 1.0, 1.2])
-criterion = nn.CrossEntropyLoss(weight=class_weights.to(device))
-optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.000001)
-# scheduler = ExpLR(optimizer, gamma=0.9)
-NUM_EPOCHS = 35
-
-for images, labels in train_loader:
-    break
-
-# Iterating through training, val, and test data
 if __name__ == "__main__":
+    model = MyModel()
+    model = model.to(device)
+    model.train()
+
+    class_weights = torch.tensor([1.1, 1.3, 1.0, 1.2])
+    criterion = nn.CrossEntropyLoss(weight=class_weights.to(device))
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.000001)
+    # scheduler = ExpLR(optimizer, gamma=0.9)
+    NUM_EPOCHS = 35
+
+    for images, labels in train_loader:
+        break
+
+    # Iterating through training, val, and test data
     train_losses = []
     val_losses = []
     for i in range(NUM_EPOCHS):
@@ -179,17 +179,17 @@ if __name__ == "__main__":
 
         print(f"Test Accuracy: {total_correct / len(test_dataset)} and Loss: {loss}")
 
-# Calculate precision, recall, and create Confusion Matrix
-precision = precision_score(total_targets, total_preds, average=None)
-recall = recall_score(total_targets, total_preds, average=None)
-print(f"Precision: Conditionally Edible - {precision[0]}, Deadly - {precision[1]}, Edible - {precision[2]}, Poisonous - {precision[3]}")
-print(f"Recall: Conditionally Edible - {recall[0]}, Deadly - {recall[1]}, Edible - {recall[2]}, Poisonous - {recall[3]}")
+    # Calculate precision, recall, and create Confusion Matrix
+    precision = precision_score(total_targets, total_preds, average=None)
+    recall = recall_score(total_targets, total_preds, average=None)
+    print(f"Precision: Conditionally Edible - {precision[0]}, Deadly - {precision[1]}, Edible - {precision[2]}, Poisonous - {precision[3]}")
+    print(f"Recall: Conditionally Edible - {recall[0]}, Deadly - {recall[1]}, Edible - {recall[2]}, Poisonous - {recall[3]}")
 
-cm = confusion_matrix(total_targets, total_preds)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
-disp.plot()
-plt.savefig('confusion-matrix.png')
-plt.show() 
+    cm = confusion_matrix(total_targets, total_preds)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
+    disp.plot()
+    plt.savefig('confusion-matrix.png')
+    plt.show() 
 
-# Saving the model to a file path
-torch.save(model.state_dict(), "model.pt")
+    # Saving the model to a file path
+    torch.save(model.state_dict(), "model.pt")
