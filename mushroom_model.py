@@ -21,7 +21,7 @@ train_transforms = v2.Compose([
     # v2.Resize(size=(100, 100), antialias=True), # Applies to all images
     v2.RandomResizedCrop(size=(200, 200), antialias=True),
     v2.RandomRotation(15),
-    v2.RandomHorizontalFlip(0.5), # Randomly applied to images with 0.15 probability
+    v2.RandomHorizontalFlip(0.5), # Randomly applied to images with 0.5 probability
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]), # Normalizes all inputs
 ])
 
@@ -37,7 +37,7 @@ train_dataset = ImageFolder('split_mushroom_data/train', transform=train_transfo
 val_dataset = ImageFolder('split_mushroom_data/val', transform=val_test_transforms)
 test_dataset = ImageFolder('split_mushroom_data/test', transform=val_test_transforms)
 
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True, num_workers=16, pin_memory=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=16, pin_memory=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False, num_workers=16, pin_memory=True)
 
@@ -57,7 +57,10 @@ if visualize == "y":
             plt1.set_title(train_dataset.classes[labels[idx].item()])
             plt1.axis('off')
     plt.tight_layout()
+    plt.savefig('image-visualize.png')
     plt.show()
+
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
 
 class MyModel(nn.Module):
     def __init__(self):
@@ -119,7 +122,8 @@ if __name__ == "__main__":
             train_X = train_X.to(device)
             train_y = train_y.to(device)
             train_preds = model(train_X)
-            loss = criterion(train_preds, train_y)
+            pNorm = sum(param.abs().pow(2).sum() for param in model.parameters())
+            loss = criterion(train_preds, train_y) + 0.0001*pNorm
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
