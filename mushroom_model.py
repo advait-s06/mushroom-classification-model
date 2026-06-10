@@ -178,16 +178,16 @@ if __name__ == "__main__":
         test_losses.append(loss.detach().cpu().numpy())
 
         print(f"Test Accuracy: {total_correct / len(test_dataset)} and Loss: {loss}")
-
     # Calculate precision, recall, and create Confusion Matrix
     precision = precision_score(total_targets, total_preds, average=None)
     recall = recall_score(total_targets, total_preds, average=None)
     print(f"Precision: Conditionally Edible - {precision[0]}, Deadly - {precision[1]}, Edible - {precision[2]}, Poisonous - {precision[3]}")
     print(f"Recall: Conditionally Edible - {recall[0]}, Deadly - {recall[1]}, Edible - {recall[2]}, Poisonous - {recall[3]}")
 
+    plt.figure(figsize=(12, 10))
     cm = confusion_matrix(total_targets, total_preds)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=test_dataset.classes)
-    disp.plot()
+    disp.plot(ax=plt.gca())
     plt.savefig('confusion-matrix.png')
     plt.show() 
 
