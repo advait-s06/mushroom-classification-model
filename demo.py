@@ -4,7 +4,7 @@ from PIL import Image
 from mushroom_model import MyModel
 from torchvision.transforms import v2
 
-input_img = Image.open("poisonous_mushroom_demo.png")
+input_img = Image.open("poisonous_mushroom_demo.png").convert('RGB')
 
 transform = v2.Compose([
     v2.ToTensor(),
@@ -19,3 +19,4 @@ out = model(torch.tensor(input_tensor))
 softmax = nn.Softmax(dim=1)
 probabilities = softmax(out)
 print(probabilities.squeeze().tolist())
+print(probabilities[0])
